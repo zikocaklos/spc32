@@ -34,6 +34,18 @@ def set_leds(led1: bool, led2: bool):
     led_state["led2"] = led2
     return {"message": "LEDs actualizados", "status": led_state}
 
+motor_state = {"motor": False}
+
+@router.get("/motor")
+def get_motor():
+    return motor_state
+
+@router.post("/motor")
+def set_motor(motor: bool):
+    motor_state["motor"] = motor
+    return {"message": "Motor actualizado", "status": motor_state}
+
+
 
 @router.get("/leds")
 def get_leds():
