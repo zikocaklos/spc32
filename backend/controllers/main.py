@@ -37,6 +37,27 @@ motor_state = {
 
 
 # -----------------------------
+#   SIMULACIÓN LDR (LÓGICA)
+# -----------------------------
+def process_ldr_value(light_value: float):
+    """
+    Lógica simulada del sensor LDR.
+    El ESP32 enviará valores entre 0 y 4095.
+    """
+    
+    # Puedes cambiar este umbral según tu proyecto real
+    UMBRAL_OSCURIDAD = 1500
+
+    if light_value < UMBRAL_OSCURIDAD:
+        led_state["led1"] = True   # Encender LED por oscuridad
+    else:
+        led_state["led1"] = False  # Apagar LED
+
+    # devolvemos el valor para mantener consistencia
+    return light_value
+
+
+# -----------------------------
 #        SENSORES
 # -----------------------------
 @router.get("/sensors")
@@ -49,8 +70,14 @@ def get_sensors():
 
 @router.post("/update")
 def update_sensor_values(body: SensorUpdate):
+
+    # Guardamos distancia normal
     data["distance"] = body.distance
-    data["light"] = body.light
+
+    # Procesamos luz con la lógica de LDR
+    processed_light = process_ldr_value(body.light)
+    data["light"] = processed_light
+
     return {"message": "Datos actualizados correctamente"}
 
 
