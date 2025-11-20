@@ -104,12 +104,13 @@ def set_leds(body: LEDModel):
 # -----------------------------
 @router.get("/motor")
 def get_motor():
+    print("GET /api/motor solicitado ->", motor_state)
     return motor_state
-
 
 @router.post("/motor")
 def set_motor(body: MotorModel):
     motor_state["motor"] = body.motor
+    print("POST /api/motor recibido ->", motor_state)
     return {
         "message": "Motor actualizado",
         "status": motor_state
