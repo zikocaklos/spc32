@@ -1,8 +1,26 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/api")
 
-# Variables simuladas (Render no puede leer hardware)
+# -----------------------------
+#   MODELOS PARA RECIBIR JSON
+# -----------------------------
+class LEDModel(BaseModel):
+    led1: bool
+    led2: bool
+
+class MotorModel(BaseModel):
+    motor: bool
+
+class SensorUpdate(BaseModel):
+    distance: float
+    light: float
+
+
+# -----------------------------
+#   VARIABLES SIMULADAS
+# -----------------------------
 data = {
     "distance": 0,
     "light": 0
@@ -17,6 +35,7 @@ motor_state = {
     "motor": False
 }
 
+
 # -----------------------------
 #        SENSORES
 # -----------------------------
@@ -29,9 +48,9 @@ def get_sensors():
 
 
 @router.post("/update")
-def update_sensor_values(distance: float, light: float):
-    data["distance"] = distance
-    data["light"] = light
+def update_sensor_values(body: SensorUpdate):
+    data["distance"] = body.distance
+    data["light"] = body.light
     return {"message": "Datos actualizados correctamente"}
 
 
@@ -44,9 +63,9 @@ def get_leds():
 
 
 @router.post("/leds")
-def set_leds(led1: bool, led2: bool):
-    led_state["led1"] = led1
-    led_state["led2"] = led2
+def set_leds(body: LEDModel):
+    led_state["led1"] = body.led1
+    led_state["led2"] = body.led2
     return {
         "message": "LEDs actualizados",
         "status": led_state
@@ -62,8 +81,8 @@ def get_motor():
 
 
 @router.post("/motor")
-def set_motor(motor: bool):
-    motor_state["motor"] = motor
+def set_motor(body: MotorModel):
+    motor_state["motor"] = body.motor
     return {
         "message": "Motor actualizado",
         "status": motor_state
